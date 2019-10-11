@@ -73,13 +73,14 @@ plot_df = instacart %>%
 popular_product = instacart %>% filter(aisle == "baking ingredients"|aisle == "dog food care"|aisle == "packaged vegetables fruits") %>% 
   group_by(aisle, product_name) %>%
   summarize(n_pop_pro = n()) %>%
-  filter(min_rank(desc(n_pop_pro)) < 4)
+  filter(min_rank(desc(n_pop_pro)) < 4) 
+  knitr::kable(popular_product,digits = 1)
 
 mean_hour = instacart %>% 
   filter(product_name == "Pink Lady Apples"|product_name == "Coffee Ice Cream") %>% 
   group_by(product_name, order_dow) %>%
   summarize(mean_hour_of_day = mean(order_hour_of_day))
-
+knitr::kable(mean_hour,digits = 0)
 # how to show the table after knit?
 
 
@@ -95,8 +96,23 @@ health = brfss_smart2010 %>%
   filter(topic == "Overall Health") %>%
   filter(response == "Excellent" | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") %>%
   mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good","Very good","Excellent"))) 
-  
 
+```
 
+```{r}
+num_loc_2002 = health %>% filter(year == 2002) %>%
+  group_by(locationabbr,locationdesc) %>% 
+  summarise(n = n())
+num_loc_2002 %>% group_by(locationabbr) %>% 
+  summarise(obs_loc_num = n()) %>%
+  filter(obs_loc_num >= 7)
+
+num_loc_2010 = health %>% filter(year == 2010) %>%
+  group_by(locationabbr,locationdesc) %>% 
+  summarise(n = n())
+num_loc_2010 %>% group_by(locationabbr) %>% 
+  summarise(obs_loc_num = n()) %>%
+  filter(obs_loc_num >= 7) 
+                                                
 ```
 
