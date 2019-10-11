@@ -37,7 +37,9 @@ Take the first observation as an example: It records the product 49302, which is
 
 ```{r aisles}
 library(tidyverse)
-instacart %>% group_by(aisle) %>% summarize(n = n()) %>% arrange(desc(n))
+instacart %>% group_by(aisle) %>% 
+  summarize(n = n()) %>% 
+  arrange(desc(n))
 ```
 ##Answer the questions:
 There are `r length(unique(pull(instacart, aisle_id)))` aisles, and the most items ordered from is fresh vegetables.
@@ -73,7 +75,8 @@ popular_product = instacart %>% filter(aisle == "baking ingredients"|aisle == "d
   summarize(n_pop_pro = n()) %>%
   filter(min_rank(desc(n_pop_pro)) < 4)
 
-mean_hour = instacart %>% filter(product_name == "Pink Lady Apples"|product_name == "Coffee Ice Cream") %>% 
+mean_hour = instacart %>% 
+  filter(product_name == "Pink Lady Apples"|product_name == "Coffee Ice Cream") %>% 
   group_by(product_name, order_dow) %>%
   summarize(mean_hour_of_day = mean(order_hour_of_day))
 
@@ -82,8 +85,17 @@ mean_hour = instacart %>% filter(product_name == "Pink Lady Apples"|product_name
 
 ```
 
+#Problem 2
+```{r import data}
+library(p8105.datasets)
+data(brfss_smart2010) 
 
-```{r }
+health = brfss_smart2010 %>%
+  janitor::clean_names() %>%
+  filter(topic == "Overall Health") %>%
+  filter(response == "Excellent" | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") %>%
+  mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good","Very good","Excellent"))) 
+  
 
 
 ```
