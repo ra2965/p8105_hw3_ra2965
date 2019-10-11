@@ -1,0 +1,76 @@
+---
+title: "p8105_hw3_ra2965"
+output: github_document
+---
+#Problem 1
+
+```{r Problem1, message = FALSE}
+devtools::install_github("p8105/p8105.datasets")
+library(p8105.datasets)
+data(instacart)
+```
+Instacart is an online grocery service that allows people to shop online from local stores. This dataset describes the details of the online orders at Instacart. The dataset instacart contains `r nrow(instacart)` rows and `r ncol(instacart)` variables, where each row in the dataset is a product from an order. There is a single order per user in this dataset.
+
+There are 15 variables in this dataset including the identifiers for the products, orders and customers, for example:
+
+add_to_cart_order: order in which each product was added to cart
+
+reordered: indicator of whether this prodcut has been ordered by this user in the past
+
+eval_set: which evaluation set this order belongs in
+
+order_number: the order sequence number for this user
+
+order_dow: the day of the week on which the order was placed
+
+order_hour_of_day: the hour of the day on which the order was placed
+
+days_since_prior_order: days since the last order, capped at 30, 
+product_name: name of the product
+
+aisle: the name of the aisle
+
+department: the name of the department
+
+##giving illstrative examples of observations:
+Take the first observation as an example: It records the product 49302, which is Bulgarian Yogurt, in the first order recorded of the user 112108. It belongs in the evaluation set of train. The order sequence number for this user is 4. The order was placed in the 10th hour in the day and it is the 4th day of the week. There are 9 days since the last order. The aisle id is 120 and the name of the aisle is yogurt.The product is in the department of dairy eggs.
+
+```{r aisles}
+library(tidyverse)
+instacart %>% group_by(aisle) %>% summarize(n = n()) %>% arrange(desc(n))
+```
+##Answer the questions:
+There are `r length(unique(pull(instacart, aisle_id)))` aisles, and the most items ordered from is fresh vegetables.
+```{r plot}
+library(ggridges)
+
+plot_df = instacart %>% 
+  group_by(aisle) %>% 
+  summarize(n = n()) %>% 
+  filter(n > 10000) %>% 
+  mutate(aisle = as.factor(aisle), 
+         aisle = forcats::fct_reorder(aisle, n))
+    
+plot_df  %>%  ggplot(aes(x = aisle, y = n)) + geom_point(alpha = 0.6) + 
+    labs(
+    title = "The number of items ordered in each aisle",
+    x = "aisle",
+    y = "number of items") +
+    scale_y_continuous(
+    breaks  = c(10000, 30000,  50000,  70000,  90000, 120000, 160000), 
+    limits = c(9000, 160000)
+    ) + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+```
+
+
+
+```{r Problem2}
+
+```
+
+
+```{r }
+
+```
+
