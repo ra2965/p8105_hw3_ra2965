@@ -75,11 +75,16 @@ popular_product = instacart %>% filter(aisle == "baking ingredients"|aisle == "d
   summarize(n_pop_pro = n()) %>%
   filter(min_rank(desc(n_pop_pro)) < 4) 
   knitr::kable(popular_product,digits = 1)
-
+#what should be in the table? product name or number
 mean_hour = instacart %>% 
   filter(product_name == "Pink Lady Apples"|product_name == "Coffee Ice Cream") %>% 
   group_by(product_name, order_dow) %>%
-  summarize(mean_hour_of_day = mean(order_hour_of_day))
+  summarize(mean_hour_of_day = mean(order_hour_of_day)) %>%
+  select(product_name, order_dow,mean_hour_of_day) %>%
+  pivot_wider(
+    names_from = "order_dow",
+    values_from = "mean_hour_of_day"
+  )
 knitr::kable(mean_hour,digits = 0)
 # how to show the table after knit?
 
@@ -113,6 +118,10 @@ num_loc_2010 = health %>% filter(year == 2010) %>%
 num_loc_2010 %>% group_by(locationabbr) %>% 
   summarise(obs_loc_num = n()) %>%
   filter(obs_loc_num >= 7) 
-                                                
+#what actually is asking?                                                
+```
+
+```{r}
+
 ```
 
