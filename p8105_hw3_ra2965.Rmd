@@ -41,7 +41,7 @@ instacart %>% group_by(aisle) %>% summarize(n = n()) %>% arrange(desc(n))
 ```
 ##Answer the questions:
 There are `r length(unique(pull(instacart, aisle_id)))` aisles, and the most items ordered from is fresh vegetables.
-```{r plot}
+```{r aisle plot}
 library(ggridges)
 
 plot_df = instacart %>% 
@@ -51,13 +51,14 @@ plot_df = instacart %>%
   mutate(aisle = as.factor(aisle), 
          aisle = forcats::fct_reorder(aisle, n))
     
-plot_df  %>%  ggplot(aes(x = aisle, y = n)) + geom_point(alpha = 0.6) + 
+  ggplot(plot_df,aes(x = aisle, y = n)) + 
+    geom_point(alpha = 0.6) +
     labs(
     title = "The number of items ordered in each aisle",
     x = "aisle",
     y = "number of items") +
     scale_y_continuous(
-    breaks  = c(10000, 30000,  50000,  70000,  90000, 120000, 160000), 
+    breaks  = c(20000, 40000,  60000,  80000,  100000, 120000, 140000, 160000), 
     limits = c(9000, 160000)
     ) + theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
@@ -65,12 +66,25 @@ plot_df  %>%  ggplot(aes(x = aisle, y = n)) + geom_point(alpha = 0.6) +
 
 
 
-```{r Problem2}
+```{r aisle table}
+
+popular_product = instacart %>% filter(aisle == "baking ingredients"|aisle == "dog food care"|aisle == "packaged vegetables fruits") %>% 
+  group_by(aisle, product_name) %>%
+  summarize(n_pop_pro = n()) %>%
+  filter(min_rank(desc(n_pop_pro)) < 4)
+
+mean_hour = instacart %>% filter(product_name == "Pink Lady Apples"|product_name == "Coffee Ice Cream") %>% 
+  group_by(product_name, order_dow) %>%
+  summarize(mean_hour_of_day = mean(order_hour_of_day))
+
+# how to show the table after knit?
+
 
 ```
 
 
 ```{r }
+
 
 ```
 
