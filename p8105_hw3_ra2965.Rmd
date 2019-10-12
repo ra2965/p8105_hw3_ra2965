@@ -85,7 +85,7 @@ mean_hour = instacart %>%
     names_from = "order_dow",
     values_from = "mean_hour_of_day"
   )
-knitr::kable(mean_hour,digits = 0)
+knitr::kable(mean_hour,digits = 3)
 # how to show the table after knit?
 
 
@@ -99,21 +99,21 @@ data(brfss_smart2010)
 health = brfss_smart2010 %>%
   janitor::clean_names() %>%
   filter(topic == "Overall Health") %>%
-  filter(response == "Excellent" | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") %>%
+  filter(response %in% c("Excellent","Very good", "Good", "Fair","Poor") )%>%
   mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good","Very good","Excellent"))) 
 
 ```
 
-```{r}
+```{r states:more than 7 locations}
 num_loc_2002 = health %>% filter(year == 2002) %>%
-  group_by(locationabbr,locationdesc) %>% 
+  group_by(locationabbr, locationdesc) %>% 
   summarise(n = n())
 num_loc_2002 %>% group_by(locationabbr) %>% 
   summarise(obs_loc_num = n()) %>%
   filter(obs_loc_num >= 7)
 
 num_loc_2010 = health %>% filter(year == 2010) %>%
-  group_by(locationabbr,locationdesc) %>% 
+  group_by(locationabbr, locationdesc) %>% 
   summarise(n = n())
 num_loc_2010 %>% group_by(locationabbr) %>% 
   summarise(obs_loc_num = n()) %>%
@@ -122,6 +122,16 @@ num_loc_2010 %>% group_by(locationabbr) %>%
 ```
 
 ```{r}
+excellent_response = health %>% 
+  filter(response == "Excellent") %>%
+  group_by(locationabbr,year) %>%
+  summarize(mean_data = mean(data_value,na.rm = TRUE)) 
+#how to round the mean data?
+#should we include NAs?
+
+excellent_response %>%
+  ggplot(aes(x = year, y = mean_data, color = locationabbr)) + 
+    geom_line() 
 
 ```
 
