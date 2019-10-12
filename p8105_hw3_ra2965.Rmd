@@ -107,19 +107,20 @@ health = brfss_smart2010 %>%
 ```{r 2002 states:more than 7 locations}
 num_loc_2002 = health %>% filter(year == 2002) %>%
   group_by(locationabbr, locationdesc) %>% 
-  summarise(n = n())
-num_loc_2002 %>% group_by(locationabbr) %>% 
+  summarise(n = n()) %>% 
+  group_by(locationabbr) %>% 
   summarise(obs_loc_num = n()) %>%
   filter(obs_loc_num >= 7)
-
+knitr::kable(num_loc_2002,digits = 3)
 ```
 ```{r 2010 states:more than 7 locations}
 num_loc_2010 = health %>% filter(year == 2010) %>%
   group_by(locationabbr, locationdesc) %>% 
-  summarise(n = n())
-num_loc_2010 %>% group_by(locationabbr) %>% 
+  summarise(n = n()) %>% 
+  group_by(locationabbr) %>% 
   summarise(obs_loc_num = n()) %>%
   filter(obs_loc_num >= 7) 
+knitr::kable(num_loc_2010,digits = 3)
 #what actually is asking?     
 ```
 
@@ -143,7 +144,7 @@ excellent_response %>%
 #do we need to make the plot clearly? how can we make it look nice?
 
 ```
-```{r}
+```{r ny boxplot}
 
 ny = health %>% 
   filter(locationabbr == "NY", year %in% c(2006,2010)) 
@@ -155,9 +156,13 @@ ggplot(ny, aes(x = response, y = data_value)) +
   labs(
     title = "Distribution of data_value for responses among locations in NY State",
     x = "Response",
-    y = "Data Value"
+    y = "Data Value (%)"
   ) 
   
 #Warning in install.packages :package ‘patchwork’ is not available (for R version 3.6.1)
+```
+
+```{r Problem3, message = FALSE}
+accel_data = read_csv(file = "./accel_data.csv")
 ```
 
