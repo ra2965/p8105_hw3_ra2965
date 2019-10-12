@@ -46,14 +46,14 @@ There are `r length(unique(pull(instacart, aisle_id)))` aisles, and the most ite
 ```{r aisle plot}
 library(ggridges)
 
-plot_df = instacart %>% 
+order_df = instacart %>% 
   group_by(aisle) %>% 
   summarize(n = n()) %>% 
   filter(n > 10000) %>% 
   mutate(aisle = as.factor(aisle), 
          aisle = forcats::fct_reorder(aisle, n))
     
-  ggplot(plot_df,aes(x = aisle, y = n)) + 
+  ggplot(order_df,aes(x = aisle, y = n)) + 
     geom_point(alpha = 0.6) +
     labs(
     title = "The number of items ordered in each aisle",
@@ -104,7 +104,7 @@ health = brfss_smart2010 %>%
 
 ```
 
-```{r states:more than 7 locations}
+```{r 2002 states:more than 7 locations}
 num_loc_2002 = health %>% filter(year == 2002) %>%
   group_by(locationabbr, locationdesc) %>% 
   summarise(n = n())
@@ -112,26 +112,52 @@ num_loc_2002 %>% group_by(locationabbr) %>%
   summarise(obs_loc_num = n()) %>%
   filter(obs_loc_num >= 7)
 
+```
+```{r 2010 states:more than 7 locations}
 num_loc_2010 = health %>% filter(year == 2010) %>%
   group_by(locationabbr, locationdesc) %>% 
   summarise(n = n())
 num_loc_2010 %>% group_by(locationabbr) %>% 
   summarise(obs_loc_num = n()) %>%
   filter(obs_loc_num >= 7) 
-#what actually is asking?                                                
+#what actually is asking?     
 ```
+
+
 
 ```{r}
 excellent_response = health %>% 
   filter(response == "Excellent") %>%
   group_by(locationabbr,year) %>%
   summarize(mean_data = mean(data_value,na.rm = TRUE)) 
-#how to round the mean data?
-#should we include NAs?
+#how to round the mean data? do we have to?
 
 excellent_response %>%
   ggplot(aes(x = year, y = mean_data, color = locationabbr)) + 
-    geom_line() 
+    geom_point() + geom_line() +
+  labs(
+    title = "Average data value over time within a state across years(%)",
+    x = "Year",
+    y = "Average data value (%)"
+  ) 
+#do we need to make the plot clearly? how can we make it look nice?
 
+```
+```{r}
+
+ny = health %>% 
+  filter(locationabbr == "NY", year %in% c(2006,2010)) 
+ggplot(ny, aes(x = response, y = data_value)) + 
+  geom_boxplot() +
+   facet_grid(~year) + 
+  viridis::scale_fill_viridis(discrete = TRUE) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(
+    title = "Distribution of data_value for responses among locations in NY State",
+    x = "Response",
+    y = "Data Value"
+  ) 
+  
+#Warning in install.packages :package ‘patchwork’ is not available (for R version 3.6.1)
 ```
 
