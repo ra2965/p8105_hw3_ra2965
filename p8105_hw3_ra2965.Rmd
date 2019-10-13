@@ -168,15 +168,36 @@ accel_data = read_csv(file = "./accel_data.csv") %>%
   pivot_longer(
     activity_1:activity_1440,
     names_to = "activity", 
-    values_to = "counts") %>%
+    values_to = "counts"
+              ) %>%
     mutate(
-      day_indicator = case_when(
+        day_indicator = case_when(
         day %in% c("Saturday","Sunday") ~ "weekend",
         day %in% c("Monday","Tuesday","Wednesday","Thursday","Friday") ~ "weekday",
-    TRUE ~ ""
-    )
+    TRUE ~ "" 
+                                  )
           )
 #and encode data with reasonable variable classes?
+
+```
+Describe the resulting dataset (e.g. what variables exist, how many observations, etc).
+
+This dataset contains five weeks of accelerometer data collected on a patient, who was admitted to the Advanced Cardiac Care Center of Columbia University Medical Center and diagnosed with congestive heart failure (CHF). Since the activity counts are for each minute of a 24-hour day starting at midnight of 5 weeks, there are `r nrow(accel_data)` observations.
+
+week: the week number
+
+day_id: unique identifier for a specific day in the 5 weeks
+
+day: indicates a specific day in a week
+
+day_indicator: indicating a specific day is weekday or weekend
+
+activity: the unique identfier for a activity test minute each time
+
+count: the activity counts for each minute
+
+
+```{r}
 
 ```
 
