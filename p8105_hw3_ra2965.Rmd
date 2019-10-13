@@ -163,6 +163,20 @@ ggplot(ny, aes(x = response, y = data_value)) +
 ```
 
 ```{r Problem3, message = FALSE}
-accel_data = read_csv(file = "./accel_data.csv")
+accel_data = read_csv(file = "./accel_data.csv") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = "activity", 
+    values_to = "counts") %>%
+    mutate(
+      day_indicator = case_when(
+        day %in% c("Saturday","Sunday") ~ "weekend",
+        day %in% c("Monday","Tuesday","Wednesday","Thursday","Friday") ~ "weekday",
+    TRUE ~ ""
+    )
+          )
+#and encode data with reasonable variable classes?
+
 ```
 
