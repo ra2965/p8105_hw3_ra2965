@@ -135,7 +135,7 @@ excellent_response = health %>%
 
 excellent_response %>%
   ggplot(aes(x = year, y = mean_data, color = locationabbr)) + 
-    geom_point() + geom_line() +
+  geom_line() +
   labs(
     title = "Average data value over time within a state across years(%)",
     x = "Year",
