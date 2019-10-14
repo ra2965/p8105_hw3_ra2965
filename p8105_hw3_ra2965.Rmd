@@ -70,19 +70,20 @@ order_df = instacart %>%
 
 
 
-```{r aisle table}
+```{r aisle table, message = FALSE}
 
 popular_product = instacart %>% 
   filter(aisle == "baking ingredients"|aisle == "dog food care"|aisle == "packaged vegetables fruits") %>% 
   group_by(aisle, product_name) %>%
   summarize(n_pop_pro = n()) %>%
   filter(min_rank(desc(n_pop_pro)) < 4) 
-  knitr::kable(popular_product,
+  knitr::kable(popular_product %>%
+               arrange(desc(n_pop_pro)),
                col.names = c("Aisle", "Most Popular Items", "Number of Items"),
                format = "html",
                caption = "The 3 most popular items in each of the 3 aisles"
                )
-
+ 
 
 ```
 ```{r}
@@ -189,7 +190,7 @@ ggplot(ny, aes(x = response, y = data_value)) +
 #Problem 3
 ##Import and tidy the dataset:
 ```{r Problem3, message = FALSE}
-accel_data = read_csv(file = "./accel_data.csv") %>%
+accel_data = read_csv(file = "./data/accel_data.csv") %>%
   janitor::clean_names() %>%
   pivot_longer(
     activity_1:activity_1440,
@@ -236,7 +237,7 @@ reader_friendly_table = daytotal %>%
   names_from = day,
   values_from = day_tatal
 )  
-knitr::kable(reader_friendly_table, 
+knitr::kable(reader_friendly_table,
              format = "html",
              caption = "Total activity counts for each day",
              digits = 0)
