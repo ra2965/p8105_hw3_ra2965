@@ -78,7 +78,7 @@ popular_product = instacart %>%
   summarize(n_pop_pro = n()) %>%
   filter(min_rank(desc(n_pop_pro)) < 4) 
   knitr::kable(popular_product,
-               col.names = c("Aisle", "Most Popular Items", "Number of Product"),
+               col.names = c("Aisle", "Most Popular Items", "Number of Items"),
                format = "html",
                caption = "The 3 most popular items in each of the 3 aisles"
                )
@@ -98,11 +98,13 @@ mean_hour = instacart %>%
 knitr::kable(mean_hour, 
              format = "html",
              caption = "The mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week",
+             col.names = c("Product Name", "Sunday", "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"),
              digits = 3)
 
 ```
 
 #Problem 2
+##Import dataset and tidy it:
 ```{r import data}
 library(p8105.datasets)
 data(brfss_smart2010) 
@@ -114,7 +116,7 @@ health = brfss_smart2010 %>%
   mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good","Very good","Excellent"))) 
 
 ```
-In 2002, which states were observed at 7 or more locations? 
+##In 2002, which states were observed at 7 or more locations? 
 ```{r 2002 states:more than 7 locations}
 num_loc_2002 = health %>% 
   filter(year == 2002) %>%
@@ -131,7 +133,7 @@ knitr::kable(num_loc_2002,
 ```
 In 2002,the abbreviation of states which were observed at 7 or more locations are shown in the table above.
 
-In 2010, which states were observed at 7 or more locations?
+##In 2010, which states were observed at 7 or more locations?
 ```{r 2010 states:more than 7 locations}
 num_loc_2010 = health %>% filter(year == 2010) %>%
   group_by(locationabbr, locationdesc) %>% 
@@ -146,7 +148,7 @@ knitr::kable(num_loc_2010,
 ```
 In 2010, the abbreviation of states which were observed at 7 or more locations are shown in the table above.
 
-Make a “spaghetti” plot of this average value over time within a state limiting to "Excellent"" responses:
+##Make a “spaghetti” plot of this average value over time within a state limiting to "Excellent"" responses:
 ```{r}
 excellent_response = health %>% 
   filter(response == "Excellent") %>%
@@ -164,7 +166,9 @@ excellent_response %>%
 
 ```
 
-Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State:
+##Make a two-panel plot 
+
+The plot is showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State:
 ```{r ny boxplot, message=FALSE}
 
 ny = health %>% 
@@ -183,8 +187,7 @@ ggplot(ny, aes(x = response, y = data_value)) +
 ```
 
 #Problem 3
-
-Import and tidy the dataset:
+##Import and tidy the dataset:
 ```{r Problem3, message = FALSE}
 accel_data = read_csv(file = "./accel_data.csv") %>%
   janitor::clean_names() %>%
@@ -221,9 +224,9 @@ activity: the unique identfier for a activity test minute each time
 
 count: the activity counts for each minute
 
-
+##Create a table showing total activity for each day:
 ```{r create a table showing totals}
-daytotal = accel_data %>% 
+daytotal = accel_data %>%
   group_by(week, day) %>%
   summarise(day_tatal = sum(counts, na.rm = TRUE)) 
 
@@ -232,7 +235,7 @@ reader_friendly_table = daytotal %>%
   pivot_wider(
   names_from = day,
   values_from = day_tatal
-)
+)  
 knitr::kable(reader_friendly_table, 
              format = "html",
              caption = "Total activity counts for each day",
@@ -245,6 +248,6 @@ Make a single-panel plot that shows the 24-hour activity time courses for each d
 ```{r}
 accel_data %>% 
   ggplot(aes(x = activity, y = counts, color = day)) +
-  geom_point() 
+  geom_line() 
 ```
 
