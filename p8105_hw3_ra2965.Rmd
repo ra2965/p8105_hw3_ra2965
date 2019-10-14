@@ -5,7 +5,7 @@ output: github_document
 #Problem 1
 
 ```{r Problem1, message = FALSE}
-devtools::install_github("p8105/p8105.datasets")
+#devtools::install_github("p8105/p8105.datasets")
 library(p8105.datasets)
 data(instacart)
 ```
@@ -33,17 +33,19 @@ aisle: the name of the aisle
 department: the name of the department
 
 ##giving illstrative examples of observations:
-Take the first observation as an example: It records the product 49302, which is Bulgarian Yogurt, in the first order recorded of the user 112108. It belongs in the evaluation set of train. The order sequence number for this user is 4. The order was placed in the 10th hour in the day and it is the 4th day of the week. There are 9 days since the last order. The aisle id is 120 and the name of the aisle is yogurt.The product is in the department of dairy eggs.
+Take the first observation as an example: It records the product 49302, which is Bulgarian Yogurt, in the first order recorded of the user 112108. It belongs in the evaluation set of train. The order sequence number for this user is 4. The order was placed in the 10th hour in the day and it is the 4th day of the week. There were 9 days since the last order. The aisle ID is 120 and the name of the aisle is yogurt.The product is in the department of dairy eggs.
 
 ```{r aisles}
 library(tidyverse)
-instacart %>% group_by(aisle) %>% 
+instacart %>% 
+  group_by(aisle) %>% 
   summarize(n = n()) %>% 
   arrange(desc(n))
 ```
-##Answer the questions:
-There are `r length(unique(pull(instacart, aisle_id)))` aisles, and the most items ordered from is fresh vegetables.
-```{r aisle plot}
+
+There are `r length(unique(pull(instacart, aisle_id)))` aisles, and the most items ordered from is "fresh vegetables".
+
+```{r aisle plot, message = FALSE}
 library(ggridges)
 
 order_df = instacart %>% 
@@ -70,12 +72,20 @@ order_df = instacart %>%
 
 ```{r aisle table}
 
-popular_product = instacart %>% filter(aisle == "baking ingredients"|aisle == "dog food care"|aisle == "packaged vegetables fruits") %>% 
+popular_product = instacart %>% 
+  filter(aisle == "baking ingredients"|aisle == "dog food care"|aisle == "packaged vegetables fruits") %>% 
   group_by(aisle, product_name) %>%
   summarize(n_pop_pro = n()) %>%
   filter(min_rank(desc(n_pop_pro)) < 4) 
-  knitr::kable(popular_product,digits = 1)
-#what should be in the table? product name or number
+  knitr::kable(popular_product,
+               col.names = c("Aisle", "Most Popular Items", "Number of Product"),
+               format = "html",
+               caption = "The 3 most popular items in each of the 3 aisles"
+               )
+
+
+```
+```{r}
 mean_hour = instacart %>% 
   filter(product_name == "Pink Lady Apples"|product_name == "Coffee Ice Cream") %>% 
   group_by(product_name, order_dow) %>%
@@ -85,9 +95,10 @@ mean_hour = instacart %>%
     names_from = "order_dow",
     values_from = "mean_hour_of_day"
   )
-knitr::kable(mean_hour,digits = 3)
-# how to show the table after knit?
-
+knitr::kable(mean_hour, 
+             format = "html",
+             caption = "The mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week",
+             digits = 3)
 
 ```
 
@@ -99,20 +110,28 @@ data(brfss_smart2010)
 health = brfss_smart2010 %>%
   janitor::clean_names() %>%
   filter(topic == "Overall Health") %>%
-  filter(response %in% c("Excellent","Very good", "Good", "Fair","Poor") )%>%
+  filter(response %in% c("Excellent","Very good", "Good", "Fair","Poor") ) %>%
   mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good","Very good","Excellent"))) 
 
 ```
-
+In 2002, which states were observed at 7 or more locations? 
 ```{r 2002 states:more than 7 locations}
-num_loc_2002 = health %>% filter(year == 2002) %>%
+num_loc_2002 = health %>% 
+  filter(year == 2002) %>%
   group_by(locationabbr, locationdesc) %>% 
   summarise(n = n()) %>% 
   group_by(locationabbr) %>% 
   summarise(obs_loc_num = n()) %>%
   filter(obs_loc_num >= 7)
-knitr::kable(num_loc_2002,digits = 3)
+knitr::kable(num_loc_2002,
+             col.names = c("State Abbreviation", "Number of observed Locations"),
+             format = "html",
+             caption = "The states that were observed at 7 or more locations in 2002"
+             )
 ```
+In 2002,the abbreviation of states which were observed at 7 or more locations are shown in the table above.
+
+In 2010, which states were observed at 7 or more locations?
 ```{r 2010 states:more than 7 locations}
 num_loc_2010 = health %>% filter(year == 2010) %>%
   group_by(locationabbr, locationdesc) %>% 
@@ -120,18 +139,19 @@ num_loc_2010 = health %>% filter(year == 2010) %>%
   group_by(locationabbr) %>% 
   summarise(obs_loc_num = n()) %>%
   filter(obs_loc_num >= 7) 
-knitr::kable(num_loc_2010,digits = 3)
-#what actually is asking?     
+knitr::kable(num_loc_2010,
+             col.names = c("State Abbreviation", "Number of observed Locations"),
+             format = "html",
+             caption = "The states that were observed at 7 or more locations in 2010")
 ```
+In 2010, the abbreviation of states which were observed at 7 or more locations are shown in the table above.
 
-
-
+Make a “spaghetti” plot of this average value over time within a state limiting to "Excellent"" responses:
 ```{r}
 excellent_response = health %>% 
   filter(response == "Excellent") %>%
   group_by(locationabbr,year) %>%
   summarize(mean_data = mean(data_value,na.rm = TRUE)) 
-#how to round the mean data? do we have to?
 
 excellent_response %>%
   ggplot(aes(x = year, y = mean_data, color = locationabbr)) + 
@@ -141,10 +161,11 @@ excellent_response %>%
     x = "Year",
     y = "Average data value (%)"
   ) 
-#do we need to make the plot clearly? how can we make it look nice?
 
 ```
-```{r ny boxplot}
+
+Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State:
+```{r ny boxplot, message=FALSE}
 
 ny = health %>% 
   filter(locationabbr == "NY", year %in% c(2006,2010)) 
@@ -159,15 +180,18 @@ ggplot(ny, aes(x = response, y = data_value)) +
     y = "Data Value (%)"
   ) 
   
-#Warning in install.packages :package ‘patchwork’ is not available (for R version 3.6.1)
 ```
 
+#Problem 3
+
+Import and tidy the dataset:
 ```{r Problem3, message = FALSE}
 accel_data = read_csv(file = "./accel_data.csv") %>%
   janitor::clean_names() %>%
   pivot_longer(
     activity_1:activity_1440,
     names_to = "activity", 
+    names_prefix = "activity_",
     values_to = "counts"
               ) %>%
     mutate(
@@ -177,10 +201,11 @@ accel_data = read_csv(file = "./accel_data.csv") %>%
     TRUE ~ "" 
                                   )
           )
+
 #and encode data with reasonable variable classes?
 
 ```
-Describe the resulting dataset (e.g. what variables exist, how many observations, etc).
+##Describe the resulting dataset:
 
 This dataset contains five weeks of accelerometer data collected on a patient, who was admitted to the Advanced Cardiac Care Center of Columbia University Medical Center and diagnosed with congestive heart failure (CHF). Since the activity counts are for each minute of a 24-hour day starting at midnight of 5 weeks, there are `r nrow(accel_data)` observations.
 
@@ -197,7 +222,28 @@ activity: the unique identfier for a activity test minute each time
 count: the activity counts for each minute
 
 
-```{r}
+```{r create a table showing totals}
+daytotal = accel_data %>% 
+  group_by(week, day) %>%
+  summarise(day_tatal = sum(counts, na.rm = TRUE)) 
 
+
+reader_friendly_table = daytotal %>% 
+  pivot_wider(
+  names_from = day,
+  values_from = day_tatal
+)
+knitr::kable(reader_friendly_table, 
+             format = "html",
+             caption = "Total activity counts for each day",
+             digits = 0)
+```
+
+There is no apparent trends in this table.
+
+```{r}
+accel_data %>% 
+  ggplot(aes(x = activity, y = counts, color = day)) +
+  geom_point() 
 ```
 
