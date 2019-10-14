@@ -236,7 +236,9 @@ reader_friendly_table = daytotal %>%
   pivot_wider(
   names_from = day,
   values_from = day_tatal
-)  
+) %>% 
+  select(week, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday) 
+  
 knitr::kable(reader_friendly_table,
              format = "html",
              caption = "Total activity counts for each day",
@@ -245,7 +247,8 @@ knitr::kable(reader_friendly_table,
 
 There is no apparent trends in this table.
 
-Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week.
+##Make a single-panel plot 
+The plot shows the 24-hour activity time courses for each day and use color to indicate day of the week:
 ```{r}
 accel_data %>% 
   ggplot(aes(x = activity, y = counts, color = day)) +
