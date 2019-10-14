@@ -121,10 +121,8 @@ health = brfss_smart2010 %>%
 ```{r 2002 states:more than 7 locations}
 num_loc_2002 = health %>% 
   filter(year == 2002) %>%
-  group_by(locationabbr, locationdesc) %>% 
-  summarise(n = n()) %>% 
   group_by(locationabbr) %>% 
-  summarise(obs_loc_num = n()) %>%
+  summarise(obs_loc_num = n_distinct(locationdesc)) %>%
   filter(obs_loc_num >= 7)
 knitr::kable(num_loc_2002,
              col.names = c("State Abbreviation", "Number of observed Locations"),
@@ -137,10 +135,8 @@ In 2002,the abbreviation of states which were observed at 7 or more locations ar
 ##In 2010, which states were observed at 7 or more locations?
 ```{r 2010 states:more than 7 locations}
 num_loc_2010 = health %>% filter(year == 2010) %>%
-  group_by(locationabbr, locationdesc) %>% 
-  summarise(n = n()) %>% 
   group_by(locationabbr) %>% 
-  summarise(obs_loc_num = n()) %>%
+  summarise(obs_loc_num = n_distinct(locationdesc)) %>% 
   filter(obs_loc_num >= 7) 
 knitr::kable(num_loc_2010,
              col.names = c("State Abbreviation", "Number of observed Locations"),
@@ -199,11 +195,14 @@ accel_data = read_csv(file = "./data/accel_data.csv") %>%
     values_to = "counts"
               ) %>%
     mutate(
+        activity = as.numeric(activity),
         day_indicator = case_when(
         day %in% c("Saturday","Sunday") ~ "weekend",
         day %in% c("Monday","Tuesday","Wednesday","Thursday","Friday") ~ "weekday",
     TRUE ~ "" 
-                                  )
+                                  ),
+        day = forcats::fct_relevel(day, c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"))
+    
           )
 
 #and encode data with reasonable variable classes?
@@ -236,8 +235,7 @@ reader_friendly_table = daytotal %>%
   pivot_wider(
   names_from = day,
   values_from = day_tatal
-) %>% 
-  select(week, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday) 
+) 
   
 knitr::kable(reader_friendly_table,
              format = "html",
@@ -252,6 +250,14 @@ The plot shows the 24-hour activity time courses for each day and use color to i
 ```{r}
 accel_data %>% 
   ggplot(aes(x = activity, y = counts, color = day)) +
-  geom_line() 
+  geom_line() +
+  scale_x_continuous(
+    breaks = c(120, 240, 360,480,600,720,960,1200,1440)
+  ) +
+  labs(
+    title = "The 24-hour activity time courses for each day",
+    x = "Minutes",
+    y = "Activity Counts"
+  )
 ```
 
