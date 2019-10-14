@@ -170,8 +170,8 @@ The plot is showing, for the years 2006, and 2010, distribution of data_value fo
 
 ny = health %>% 
   filter(locationabbr == "NY", year %in% c(2006,2010)) 
-ggplot(ny, aes(x = response, y = data_value)) + 
-  geom_boxplot() +
+ggplot(ny) + 
+  geom_bar(aes(fill = response,x =locationdesc, y = data_value), position = position_stack(reverse = TRUE), stat = "identity") +
    facet_grid(~year) + 
   viridis::scale_fill_viridis(discrete = TRUE) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
