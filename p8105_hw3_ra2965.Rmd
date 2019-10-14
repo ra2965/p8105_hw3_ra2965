@@ -35,7 +35,7 @@ department: the name of the department
 ##giving illstrative examples of observations:
 Take the first observation as an example: It records the product 49302, which is Bulgarian Yogurt, in the first order recorded of the user 112108. It belongs in the evaluation set of train. The order sequence number for this user is 4. The order was placed in the 10th hour in the day and it is the 4th day of the week. There were 9 days since the last order. The aisle ID is 120 and the name of the aisle is yogurt.The product is in the department of dairy eggs.
 
-```{r aisles}
+```{r aisles, message = FALSE}
 library(tidyverse)
 instacart %>% 
   group_by(aisle) %>% 
@@ -64,7 +64,8 @@ order_df = instacart %>%
     scale_y_continuous(
     breaks  = c(20000, 40000,  60000,  80000,  100000, 120000, 140000, 160000), 
     limits = c(9000, 160000)
-    ) + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    ) + 
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
 ```
 
@@ -130,7 +131,7 @@ knitr::kable(num_loc_2002,
              caption = "The states that were observed at 7 or more locations in 2002"
              )
 ```
-In 2002,the abbreviation of states which were observed at 7 or more locations are shown in the table above.
+In 2002,the abbreviation of states which were observed at 7 or more locations are shown in the table above: CT, FL, MA,NC,NJ,PA.
 
 ##In 2010, which states were observed at 7 or more locations?
 ```{r 2010 states:more than 7 locations}
@@ -143,7 +144,7 @@ knitr::kable(num_loc_2010,
              format = "html",
              caption = "The states that were observed at 7 or more locations in 2010")
 ```
-In 2010, the abbreviation of states which were observed at 7 or more locations are shown in the table above.
+In 2010, the abbreviation of states which were observed at 7 or more locations are shown in the table above: CA,CO,FL,MA,MD,NC,NE,NJ,NY,OH.
 
 ##Make a “spaghetti” plot of this average value over time within a state limiting to "Excellent"" responses:
 ```{r}
@@ -249,7 +250,7 @@ There is no apparent trends in this table.
 The plot shows the 24-hour activity time courses for each day and use color to indicate day of the week:
 ```{r}
 accel_data %>% 
-  ggplot(aes(x = activity, y = counts, color = day)) +
+  ggplot(aes(x = activity, y = counts, group = day_id, color = day)) +
   geom_line() +
   scale_x_continuous(
     breaks = c(120, 240, 360,480,600,720,960,1200,1440)
